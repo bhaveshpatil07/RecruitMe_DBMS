@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS mydb.Users(
         type VARCHAR(45) NOT NULL,
         password VARCHAR(45) NULL,  
         UNIQUE INDEX email_UNIQUE (email), 
-        CHECK (type in ('Recruiter','Client')),
+        CHECK (type in ('Recruiter','Client','Administration')),
         PRIMARY KEY (email)   );
   """
 Create_recruiter_Table = """
@@ -67,3 +67,89 @@ CREATE TABLE IF NOT EXISTS mydb.Application(
 );
 """
 
+Create_DELJOB_Table="""
+CREATE TABLE IF NOT EXISTS mydb.DELJOB(
+    JID int,
+    RID int,
+    JObRole varchar(45),
+    Deleted_At datetime
+);
+"""
+
+Create_DELAPP_Table="""
+CREATE TABLE IF NOT EXISTS mydb.DELAPP(
+    CID int,
+    JID int,
+    Deleted_At datetime
+);
+"""
+
+CREATE_Admin="""
+INSERT INTO users 
+VALUE("BhaveshPatil", "ADMIN", "Administration", "password")
+"""
+
+JobTrig1="""
+CREATE TRIGGER jobTrig1
+BEFORE DELETE ON Job FOR EACH ROW
+BEGIN
+INSERT INTO DelJob
+SET JID=OLD.JID,
+RID=OLD.RID,
+JOBRole=OLD.JOBrole,
+Deleted_AT=NOW();
+END
+"""
+
+JobTrig2="""
+CREATE TRIGGER jobTrig2
+AFTER INSERT ON Job FOR EACH ROW
+BEGIN
+INSERT INTO NewJob
+SET JID=NEW.JID,
+RID=NEW.RID,
+JOBRole=NEW.JOBrole,
+Created_AT=NOW();
+END
+"""
+
+AppTrig="""
+CREATE TRIGGER appTrig
+BEFORE DELETE ON application FOR EACH ROW
+BEGIN
+INSERT INTO DelAPP
+SET CID=OLD.CID,
+JID=OLD.JID,
+Deleted_AT=NOW();
+END
+"""
+
+totalAPP="""
+CREATE PROCEDURE no_of_app()
+BEGIN
+SELECT COUNT(JID) AS No_Of_JobApplications
+FROM application;
+END
+"""
+
+totalJOB="""
+CREATE PROCEDURE no_of_job()
+BEGIN
+SELECT COUNT(JID) AS No_Of_Jobs
+FROM job;
+END
+"""
+
+totalUSERS="""
+CREATE PROCEDURE no_of_users()
+BEGIN
+SELECT COUNT(email) AS No_Of_Users
+FROM users;
+END
+"""
+
+Log_View="""
+CREATE VIEW log AS
+SELECT email,password
+FROM users
+"""

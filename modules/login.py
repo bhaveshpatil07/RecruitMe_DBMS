@@ -5,6 +5,7 @@ import mysql.connector as sql
 from modules.register import *
 from modules.recruiter import *
 from modules.client import *
+from modules.admin import *
 from modules.creds import user_pwd
 
 def success(root, email1):
@@ -26,15 +27,17 @@ def success(root, email1):
 
     if q[0][0] == "recruiter":
         rec(root, email1)
-    else:
+    elif q[0][0] == "client":
         cli(root, email1)
+    elif q[0][0] == "Administration":
+        admin(root)
 
 
 def submit(root):
     mycon = sql.connect(host='localhost', user='root',
                         passwd=user_pwd, database='mydb')
     cur = mycon.cursor()
-    cur.execute('select email,password from users')
+    cur.execute('select *from log')
     total = cur.fetchall()
     mycon.close()
     email1 = email.get()
@@ -73,19 +76,21 @@ def log(root):
 
     # Background
     f1.render = PhotoImage(file='elements\\bg.png')
+    # f1.render = PhotoImage.zoom(f1.render, 146, 6)
+    # f1.render = PhotoImage.subsample(f1.render, 100, 5)
     img = Label(f1, image=f1.render)
     img.place(x=0, y=0)
 
     # Email
     email_l = Label(f1, text="Email : ", bg='#FFFFFF',
-                    font=('normal', 20, 'bold'), fg="#00B9ED")
+                    font=('Times', 20, 'bold'), fg="#595959")
     email_l.place(x=620, y=300)
     email = Entry(f1, width=24, placeholder="Enter your Email..")
     email.place(x=720, y=300)
 
     # Password
     pwd_l = Label(f1, text="Password : ", bg='#FFFFFF',
-                  font=('normal', 20, 'bold'), fg="#00B9ED")
+                  font=('Times', 20, 'bold'), fg="#595959")
     pwd_l.place(x=565, y=350)
     pwd = Entry(f1, show="*", width=24, placeholder="Enter your Password..")
     pwd.place(x=720, y=350)

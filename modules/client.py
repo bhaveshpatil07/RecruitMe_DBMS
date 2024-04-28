@@ -56,7 +56,7 @@ def apply(table):
         cur.execute(queryapplyjob)
         mycon.commit()
         mycon.close()
-        messagebox.showinfo('Thanks', 'Your application has been submitted')
+        messagebox.showinfo('Thanks', 'Your application has been submitted !')
 
 # ----------------------------------------------Delete A Job -----------------------------------
 
@@ -86,8 +86,12 @@ def sort_alljobs(table):
         mycon = sql.connect(host='localhost', user='root',
                             passwd=user_pwd, database='mydb')
         cur = mycon.cursor()
-        cur.execute(
-            f'select job.JID,job.JobRole,job.JobType, recruiter.CompanyName, recruiter.CompanyLocation, job.Qualification, job.MinExp, job.Salary from mydb.job JOIN mydb.recruiter ON job.rid=recruiter.rid order by {criteria}')
+        a=f'select job.JID,job.JobRole,job.JobType, recruiter.CompanyName, recruiter.CompanyLocation, job.Qualification, job.MinExp, job.Salary from mydb.job JOIN mydb.recruiter ON job.rid=recruiter.rid order by {criteria}'
+        b=f'select job.JID,job.JobRole,job.JobType, recruiter.CompanyName, recruiter.CompanyLocation, job.Qualification, job.MinExp, job.Salary from mydb.job JOIN mydb.recruiter ON job.rid=recruiter.rid order by {criteria} desc'
+        if(criteria=="Salary"):
+            cur.execute(b)
+        else:
+            cur.execute(a)
         jobs = cur.fetchall()
         mycon.close()
         i = 0
@@ -165,21 +169,21 @@ def available():
     bgr.destroy()
 
     search_l = Label(rt, text="Order By : ", font=(
-        'normal', 18), bg="#ffffff")
+        'Times', 18), bg="#ffffff")
     search_l.grid(row=0, column=0, padx=10, pady=10)
     global search_d
     search_d = ttk.Combobox(rt, width=12, font=(
         'normal', 18), state='readonly')
-    search_d['values'] = ('Select', 'JobRole', 'JobType', 'CompanyLocation')
+    search_d['values'] = ('Select', 'JobRole', 'JobType', 'CompanyLocation', 'Salary')
     search_d.current(0)
-    search_d.grid(row=0, column=2, padx=0, pady=10)
+    search_d.grid(row=0, column=3, padx=0, pady=10)
     search = Button(rt, text="Sort", font=('normal', 12, 'bold'),
                     bg="#00b9ed", fg="#ffffff", command=lambda: sort_alljobs(table))
-    search.grid(row=0, column=3, padx=10, pady=10, ipadx=15)
+    search.grid(row=0, column=4, padx=10, pady=10, ipadx=15)
 
-    apl = Button(rt, text="Apply", font=('normal', 12, 'bold'),
-                 bg="#00b9ed", fg="#ffffff", command=lambda: apply(table))
-    apl.grid(row=0, column=4, padx=10, pady=10, ipadx=5)
+    apl = Button(rt, text="Apply", font=('Times', 12, 'bold'),
+                 bg="#ffd700", fg="#000000", command=lambda: apply(table))
+    apl.grid(row=0, column=5, padx=10, pady=10, ipadx=5)
 
     scx = Scrollbar(tab, orient="horizontal")
     scy = Scrollbar(tab, orient="vertical")
@@ -226,7 +230,7 @@ def myapp():
         widget.destroy()
     bgr.destroy()
 
-    search_l = Label(rt, text="Order By : ", font=('normal', 18), bg="#ffffff")
+    search_l = Label(rt, text="Order By : ", font=('Times', 18), bg="#ffffff")
     search_l.grid(row=0, column=0, padx=10, pady=10)
     global search_d
     search_d = ttk.Combobox(rt, width=12, font=(
@@ -238,8 +242,8 @@ def myapp():
                     fg="#ffffff", command=lambda: sort_myapplications(table))
     search.grid(row=0, column=3, padx=10, pady=10, ipadx=15)
 
-    dlt = Button(rt, text="Delete", font=('normal', 12, 'bold'),
-                 bg="#00b9ed", fg="#ffffff", command=lambda: delet(table))
+    dlt = Button(rt, text="Delete", font=('Times', 12, 'bold'),
+                 bg="#b32e2e", fg="#ffffff", command=lambda: delet(table))
     dlt.grid(row=0, column=4, padx=10, pady=10, ipadx=5)
 
     scx = Scrollbar(tab, orient="horizontal")
@@ -276,8 +280,119 @@ def myapp():
 
 
 # ---------------------------------------------------------------------------------------------------------------------------
+def change_done(root):
+    if opwd1 and pwd1 and cpwd1:
+        exe = f'update mydb.users set password="{pwd1}" where email="{email}"'
+        try:
+            mycon = sql.connect(host='localhost', user='root',
+                                passwd=user_pwd, database='mydb')
+            cur = mycon.cursor()
+            cur.execute(exe)
+            mycon.commit()
+            mycon.close()
+            messagebox.showinfo('SUCCESS!', 'Password Changed Successfully !\nLogin Again With New Password.')
+            logi(root)
+            opwd1.delete(0, END)
+            pwd1.delete(0, END)
+            cpwd1.delete(0, END)
+        except:
+            pass
+
+    else:
+        messagebox.showinfo('ALERT!', 'ALL FIELDS ARE MUST BE FILLED')
+
+
+def password_check(root):
+    global opwd1, pwd1, cpwd1
+    opwd1 = opwd.get()
+    pwd1 = pwd.get()
+    cpwd1 = cpwd.get()
+    print(opwd1, pwd1, cpwd1)
+    if opwd1 and pwd1 and cpwd1:
+        mycon = sql.connect(host='localhost', user='root',
+                            passwd=user_pwd, database='mydb')
+        cur = mycon.cursor()
+        cur.execute(f'select password from users where email="{email}"')
+        old = cur.fetchall()
+        oldp = old[0][0]
+        mycon.close()
+
+        if oldp!=opwd1:
+            messagebox.showinfo('ALERT!', 'INVALID Old Password !')
+            opwd.delete(0, END)
+
+        else:
+            if pwd1 == cpwd1:
+                if pwd1==opwd1:
+                    messagebox.showinfo('ALERT!', "NEW Password CAN'T be SAME as OLD Password.")
+                    opwd.delete(0, END)
+                    pwd.delete(0, END)
+                    cpwd.delete(0, END)
+                else:
+                    change_done(root)
+            else:
+                messagebox.showinfo('ALERT!', 'NEW PASSWORDS DO NOT MATCH !')
+                pwd.delete(0, END)
+                cpwd.delete(0, END)
+
+    else:
+        messagebox.showinfo('ALERT!', 'ALL FIELDS ARE MUST BE FILLED')
+
+def change(root, email):
+    global opwd, pwd, cpwd
+    print("Change Password")
+    bg.destroy()
+    r2 = Frame(root, height=700, width=1050)
+    r2.place(x=0, y=0)
+    r2.render = PhotoImage(file="elements/cp_bg.png")
+    img = Label(r2, image=r2.render)
+    img.place(x=0, y=0)
+    # name_l = Label(r2, text="Name : ", bg='#FFFFFF', fg="#000000",
+    #                font=('Times', 20, 'bold'))
+    # name_l.place(x=100, y=250)
+    # name = Entry(r2, placeholder='Enter Your Full Name...', width=20)
+    # name.place(x=290, y=250)
+
+    # email_l = Label(r2, text="Email : ", bg='#FFFFFF', fg="#000000",
+    #                 font=('Times', 20, 'bold'))
+    # email_l.place(x=100, y=300)
+    # email = Entry(r2, placeholder='Email', width=20)
+    # email.place(x=290, y=300)
+
+    pwd_0 = Label(r2, text="Old Password : ", bg='#FFFFFF', fg="#000000",
+                  font=('Times', 19, 'bold'))
+    pwd_0.place(x=100, y=250)
+    opwd = Entry(r2, placeholder='Enter Your Old Password', show="•", width=20)
+    opwd.place(x=290, y=250)
+
+    pwd_l = Label(r2, text="New Password : ", bg='#FFFFFF', fg="#000000",
+                  font=('Times', 19, 'bold'))
+    pwd_l.place(x=100, y=325)
+    pwd = Entry(r2, placeholder='Enter New Password', show="*", width=20)
+    pwd.place(x=290, y=325)
+
+    con_pwd_l = Label(r2, text="Please Confirm : ", bg='#FFFFFF', fg="#000000",
+                      font=('Times', 19, 'bold'))
+    con_pwd_l.place(x=100, y=400)
+    cpwd = Entry(r2, placeholder='Confirm Password', show="*", width=20)
+    cpwd.place(x=290, y=400)
+
+    r2.bn = PhotoImage(file="elements\\next1.png")
+    btn = Button(r2, image=r2.bn, bg='#FFFFFF', bd=0,
+                 activebackground="#ffffff", command=lambda: password_check(root))
+    btn.place(x=320, y=475)
+    
+    # up = Button(root, text="Done ✔️", font=(
+    #     'HoneyBee', 14, 'bold'), bg="#00bfff", border=0, fg="#ffffff", command=lambda: )
+    # up.place(x=320, y=450)
+
+    r2.back = PhotoImage(file="elements\\back.png")
+    btn2 = Button(r2, image=r2.back, bg='#FFFFFF', bd=0,
+                  activebackground="#ffffff", command=lambda: cli(root,email))
+    btn2.place(x=120, y=475)
+
 def cli(root, email1):
-    global email
+    global email, bg
     email = email1
     bg = Frame(root, width=1050, height=700)
     bg.place(x=0, y=0)
@@ -295,18 +410,21 @@ def cli(root, email1):
     cp = Label(root, text=f'{location}', font=(
         'normal', 24), bg="#ffffff", fg="#0A3D62")
     cp.place(x=300, y=120)
-    bn = Button(root, text="LOGOUT", font=('normal', 20),
+    bn = Button(root, text="LOGOUT", font=('Lucida Console', 20, 'bold'),
                 bg="#b32e2e", fg="#ffffff", command=lambda: logi(root))
     bn.place(x=800, y=75)
+    up = Button(root, text="🔒🗝", font=(
+        'HoneyBee', 14, 'bold'), bg="#00bfff", border=0, fg="#ffffff", command=lambda: change(root,email))
+    up.place(x=1000, y=3)
 
     # Left
     lf = Frame(root, width=330, height=440, bg="#ffffff")
     lf.place(x=60, y=240)
     pj = Button(lf, text="Available Jobs", font=(
-        'normal', 20), bg="#b32e2e", fg="#ffffff", command=available)
+        'Times', 20), bg="#32cd32", fg="#000000", command=available)
     pj.grid(row=0, column=0, padx=60, pady=70)
     ap = Button(lf, text="My Applications", font=(
-        'normal', 20), bg="#b32e2e", fg="#ffffff", command=myapp)
+        'Times', 20), bg="#00bfff", fg="#000000", command=myapp)
     ap.grid(row=1, column=0, padx=60, pady=70)
 
     # Right

@@ -1,7 +1,7 @@
   
 
-# # Hire-ME
-<img src="screenshots/HireMe.png" width="800">
+# # Recruit-ME
+<img src="screenshots/RecruitMe.png" width="800">
 
 
 ###  DBMS Mini-project: Recruitment Management System.💫✨
@@ -10,6 +10,8 @@
 # Features
 - ***Python + MYSQL using mysql.connector library***
 - ***Recruiter and Client Panel***
+- ***ADMIN Panel for logs***
+- ***Change Password***
 - ***Beautiful UI using tkinter***
 
 
@@ -18,6 +20,7 @@
 <img src="screenshots/001_login.png" width="500">
 <img src="screenshots/006_login_recruiter_mainscreen.png" width="500">
 <img src="screenshots/011_client_availablejobs.png" width="500">
+<img src="screenshots/014_admin.png" width="500">
 
 
 ## Setup
@@ -25,13 +28,13 @@
 ##### Clone the repository
 
 ```bash
-git clone https://github.com/karan0805/Hire-Me.git
+git clone this repo
 ```
 
 ##### Move to the desired folder
 
 ```bash
-cd Hire-ME
+cd RecriutMe
 ```
 
 ##### Make sure MYSQL is running on your System . Now move to `creds.py` inside modules folder and replace the value of `user_pwd`
@@ -51,14 +54,8 @@ python main.py
 
 ## Future-Scope
 - More Features can be added like we can make Resume on it and can share to nearby recruiters
--  Super-User(Admin) Panel For Future Features.
+-  Super-User(Admin) Panel For more Features.
 - many more ...
-
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/karan0805/Hire-Me/issues) 
-[![Open Source? Yes!](https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github)](https://github.com/karan0805/Hire-Me) 
-
-[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://github.com/karan0805/Hire-Me) 
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/karan0805/Hire-Me)
 
 ### If you encounter any difficulty running it, feel free to contact on my email :smile:
 
