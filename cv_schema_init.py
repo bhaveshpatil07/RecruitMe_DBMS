@@ -84,6 +84,23 @@ CREATE TABLE IF NOT EXISTS mydb.DELAPP(
 );
 """
 
+Create_NEWJOB_Table="""
+CREATE TABLE IF NOT EXISTS mydb.NEWJOB(
+    JID int,
+    RID int,
+    JObRole varchar(45),
+    Created_At datetime
+);
+"""
+
+Create_NEWAPP_Table="""
+CREATE TABLE IF NOT EXISTS mydb.NEWAPP(
+    CID int,
+    JID int,
+    Created_At datetime
+);
+"""
+
 CREATE_Admin="""
 INSERT INTO users 
 VALUE("BhaveshPatil", "ADMIN", "Administration", "password")
