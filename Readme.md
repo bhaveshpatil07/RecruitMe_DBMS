@@ -28,7 +28,7 @@
 ##### Clone the repository
 
 ```bash
-git clone this repo
+git clone https://github.com/bhaveshpatil07/RecruitMe_DBMS
 ```
 
 ##### Move to the desired folder
